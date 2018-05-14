@@ -105,8 +105,10 @@ The folders and files you see in this repositories is how it is expected to be i
             |        └──NoteServiceImpl            // This class implements the NoteService interface. This class has to be annotated with @Service annotation.
             |        └──ReminderService            // This interface contains all the behaviors of Reminder Model
             |        └──ReminderServiceImpl            // This class implements the ReminderService interface. This class has to be annotated with @Service annotation.
-            |        └──UserService                // This interface contains all the behaviors of Category Model
+            |        └──UserService                // This interface contains all the behaviors of User Model
             |        └──UserServiceImpl            // This class implements the UserService interface. This class has to be annotated with @Service annotation.
+    ├─src/main/resources
+            |        └── logback.xml
     ├─src/test/java                            // All the test case classes are made available here
             ├── com.stackroute.keepnote.test.controller                  
             |        └── CategoryControllerTest.java
@@ -145,7 +147,7 @@ The folders and files you see in this repositories is how it is expected to be i
 
 1. Clone the base boilerplate in the folder **assignment-solution-step3** of your local machine
      
-    `git clone https:gitlab-dev.stackroute.in/NoteApplications-Steps/KeepNote-Step4-Boilerplate.git assignment-solution-step4`
+    `git clone https://gitlab-cts.stackroute.in/KeepNote-Boilerplates/KeepNote-Step4-Boilerplate.git assignment-solution-step4`
 
 2. Navigate to assignment-solution-step3 folder
 
@@ -155,11 +157,11 @@ The folders and files you see in this repositories is how it is expected to be i
 
      `git remote rm origin`
 
-4. Create a new repo in gitlab named `assignment-solution-step3` as private repo
+4. Create a new repo in gitlab named `assignment-solution-step4` as private repo
 
 5. Add your new repository reference as remote
 
-     `git remote add origin https://gitlab.cts.com/{{yourUserName}}/assignment-solution-step3.git`
+     `git remote add origin https://gitlab.cts.com/{{yourUserName}}/assignment-solution-step4.git`
 
      **Note: {{yourUserName}} should be replaced by your userName from gitlab**
 
