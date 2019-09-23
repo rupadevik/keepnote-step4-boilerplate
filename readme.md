@@ -161,7 +161,7 @@ The folders and files you see in this repositories is how it is expected to be i
 
 5. Add your new repository reference as remote
 
-     `git remote add origin https://gitlab.cts.com/{{yourUserName}}/assignment-solution-step4.git`
+     `git remote add origin https://gitlab-cts.stackroute.in/{{yourUserName}}/assignment-solution-step4.git`
 
      **Note: {{yourUserName}} should be replaced by your userName from gitlab**
 
