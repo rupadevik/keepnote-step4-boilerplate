@@ -54,8 +54,7 @@ public class ApplicationContextConfig {
 				"jdbc:mysql://localhost:3306/test" + "?verifyServerCertificate=false&useSSL=false&requireSSL=false");
 		dataSource.setUsername("root");
 		dataSource.setPassword("root");
-*/	
-	//Use this configuration while submitting solution in hobbes and CI
+Use this configuration while submitting solution in hobbes and CI*/
 	 dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
 	 dataSource.setUrl("jdbc:mysql://" + System.getenv("MYSQL_HOST") + ":3306/" +
 	 System.getenv("MYSQL_DATABASE")
