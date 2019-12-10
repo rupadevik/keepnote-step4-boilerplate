@@ -1,5 +1,13 @@
 package com.stackroute.keepnote.controller;
 
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.stackroute.keepnote.model.User;
 import com.stackroute.keepnote.service.UserService;
 
 /*
@@ -11,17 +19,19 @@ import com.stackroute.keepnote.service.UserService;
  * is equivalent to using @Controller and @ResposeBody annotation.
  * Annotate class with @SessionAttributes this  annotation is used to store the model attribute in the session.
  */
-
+@RestController
 public class UserAuthenticationController {
-
 	/*
 	 * Autowiring should be implemented for the UserService. (Use Constructor-based
 	 * autowiring) Please note that we should not create any object using the new
 	 * keyword
 	 */
+	@Autowired
+	UserService userServiceImpl;
 
 	public UserAuthenticationController(UserService userService) {
-
+		super();
+		this.userServiceImpl = userService;
 	}
 
 	/*
@@ -36,6 +46,19 @@ public class UserAuthenticationController {
 	 * 
 	 * This handler method should map to the URL "/login" using HTTP POST method
 	 */
+	@RequestMapping("/login")
+	public ResponseEntity<String> loginUser(@RequestBody User user, HttpSession session) {
+		try {
+			if (userServiceImpl.validateUser(user.getUserId(), user.getUserPassword())) {
+				session.setAttribute("loggedInUserId", user.getUserId());
+				return new ResponseEntity<String>("Logged In", HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>("LogIn Failed", HttpStatus.UNAUTHORIZED);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<String>("User not found", HttpStatus.UNAUTHORIZED);
+		}
+	}
 
 	/*
 	 * Define a handler method which will perform logout. Post logout, the user
@@ -45,5 +68,13 @@ public class UserAuthenticationController {
 	 * 
 	 * This handler method should map to the URL "/logout" using HTTP GET method
 	 */
-
+	@RequestMapping("/logout")
+	public ResponseEntity<String> logoutUser(HttpSession session) {
+		if (null != session && null != session.getAttribute("loggedInUserId")) {
+			session.invalidate();
+			return new ResponseEntity<String>("Logged out", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>("User Not Found", HttpStatus.BAD_REQUEST);
+		}
+	}
 }

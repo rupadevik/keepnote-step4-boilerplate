@@ -1,8 +1,20 @@
 package com.stackroute.keepnote.dao;
 
 import java.util.List;
+
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.stackroute.keepnote.exception.ReminderNotFoundException;
+
 import com.stackroute.keepnote.model.Reminder;
 
 /*
@@ -14,16 +26,21 @@ import com.stackroute.keepnote.model.Reminder;
  * 					transaction. The database transaction happens inside the scope of a persistence 
  * 					context.  
  * */
-
+@Repository
+@Transactional
 public class ReminderDAOImpl implements ReminderDAO {
 	
 	/*
 	 * Autowiring should be implemented for the SessionFactory.(Use
 	 * constructor-based autowiring.
 	 */
+	
+	@Autowired
+	private SessionFactory sessionFactory;
 
 	public ReminderDAOImpl(SessionFactory sessionFactory) {
-
+	
+		this.sessionFactory = sessionFactory;
 	}
 
 	/*
@@ -31,7 +48,8 @@ public class ReminderDAOImpl implements ReminderDAO {
 	 */
 
 	public boolean createReminder(Reminder reminder) {
-		return false;
+		sessionFactory.getCurrentSession().save(reminder);
+		return true;
 
 	}
 	
@@ -40,7 +58,8 @@ public class ReminderDAOImpl implements ReminderDAO {
 	 */
 
 	public boolean updateReminder(Reminder reminder) {
-		return false;
+		sessionFactory.getCurrentSession().update(reminder);		
+		return true;
 
 	}
 
@@ -49,7 +68,14 @@ public class ReminderDAOImpl implements ReminderDAO {
 	 */
 	
 	public boolean deleteReminder(int reminderId) {
-		return false;
+		Session session =sessionFactory.getCurrentSession();
+		Reminder reminder=session.byId(Reminder.class).load(reminderId);
+		if(reminder == null) {
+			return false;
+		}
+		session.delete(reminder);
+		return true;
+
 
 	}
 
@@ -58,7 +84,13 @@ public class ReminderDAOImpl implements ReminderDAO {
 	 */
 	
 	public Reminder getReminderById(int reminderId) throws ReminderNotFoundException {
-		return null;
+		Session session =sessionFactory.getCurrentSession();
+		Reminder reminder=session.byId(Reminder.class).load(reminderId);
+		if(reminder == null) {
+			throw new ReminderNotFoundException("Reminder is not found"+ reminderId);
+		}
+		return reminder;
+
 
 	}
 
@@ -67,7 +99,14 @@ public class ReminderDAOImpl implements ReminderDAO {
 	 */
 	
 	public List<Reminder> getAllReminderByUserId(String userId) {
-		return null;
+		Session session = sessionFactory.getCurrentSession();
+	      CriteriaBuilder cb = session.getCriteriaBuilder();
+	      CriteriaQuery<Reminder> cq = cb.createQuery(Reminder.class);
+	      Root<Reminder>root =cq.from(Reminder.class);
+	      cq.select(root);
+	      Query query= session.createQuery(cq);
+		return query.getResultList();
+	
 
 	}
 

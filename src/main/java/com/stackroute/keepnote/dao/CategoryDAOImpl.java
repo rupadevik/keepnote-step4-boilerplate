@@ -1,7 +1,19 @@
 package com.stackroute.keepnote.dao;
 
+import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
+
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
 import com.stackroute.keepnote.exception.CategoryNotFoundException;
 import com.stackroute.keepnote.model.Category;
 
@@ -14,6 +26,8 @@ import com.stackroute.keepnote.model.Category;
  * 					transaction. The database transaction happens inside the scope of a persistence 
  * 					context.  
  * */
+@Repository
+@Transactional
 public class CategoryDAOImpl implements CategoryDAO {
 
 	/*
@@ -21,15 +35,20 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 * constructor-based autowiring.
 	 */
 	
+	@Autowired
+	private SessionFactory sessionFactory;
+	
 	public CategoryDAOImpl(SessionFactory sessionFactory) {
 
+		this.sessionFactory = sessionFactory;
 	}
 
 	/*
 	 * Create a new category
 	 */
 	public boolean createCategory(Category category) {
-		return false;
+		sessionFactory.getCurrentSession().save(category);
+		return true;
 
 	}
 
@@ -37,7 +56,13 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 * Remove an existing category
 	 */
 	public boolean deleteCategory(int categoryId) {
-		return false;
+		Session session =sessionFactory.getCurrentSession();
+		Category category=session.byId(Category.class).load(categoryId);
+		if(category == null) {
+			return false;
+		}
+		session.delete(category);
+		return true;
 
 	}
 	/*
@@ -45,7 +70,8 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 */
 
 	public boolean updateCategory(Category category) {
-		return false;
+		sessionFactory.getCurrentSession().update(category);		
+		return true;
 
 	}
 	/*
@@ -53,7 +79,12 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 */
 
 	public Category getCategoryById(int categoryId) throws CategoryNotFoundException {
-		return null;
+		Session session =sessionFactory.getCurrentSession();
+		Category category=session.byId(Category.class).load(categoryId);
+		if(category == null) {
+			throw new CategoryNotFoundException("Category is not found"+ categoryId);
+		}
+		return category;
 
 	}
 
@@ -61,8 +92,14 @@ public class CategoryDAOImpl implements CategoryDAO {
 	 * Retrieve details of all categories by userId
 	 */
 	public List<Category> getAllCategoryByUserId(String userId) {
-		return null;
-
+		 Session session = sessionFactory.getCurrentSession();
+	      CriteriaBuilder cb = session.getCriteriaBuilder();
+	      CriteriaQuery<Category> cq = cb.createQuery(Category.class);
+	      Root<Category>root =cq.from(Category.class);
+	      cq.select(root);
+	      Query query= session.createQuery(cq);
+		return query.getResultList();
+	
 	}
 
 }
